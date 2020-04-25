@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="old-version/css/style.css">
+  <title>To-Do list with Vue.JS</title>
+</head>
+<body>
+  
+
+  <div id="app">
+    <form action="">
+      <input v-model="newTask" type="text" class="inputTask" placeholder="Add a task and Press Enter...">
+      <button @click="addTask" class="Add-task-btn">Add task</button>
+    </form>
+    <div class="todo">
+      <h3>TO-DO </h3>
+      <ul class="todo-list">
+        <li v-for="task in pendingTasks" @click="task.done = true" :key="task.id">{{task.text}}</li>
+      </ul>
+    </div>
+    <div class="done">
+      <h3>DONE </h3>
+      <ul class="done-list">
+        <li v-for="task in doneTasks" @click="task.done = false" :key="task.id">{{task.text}}</li>
+      </ul>
+    </div>
+  </div>
+  
+  <script src="//unpkg.com/vue"></script>
+  <script>
+    const app = new Vue ({
+      el: "#app",
+      data: {
+        toDo: [{
+          id: 1,
+          text: "recuperar clases",
+          done: false
+        }],
+        newTask: ""
+      },
+      computed: {
+        pendingTasks(){
+          return this.toDo.filter((item)=> item.done===false)
+        },
+        doneTasks(){
+          return this.toDo.filter((item)=> item.done===true)
+        }
+      },
+      methods: {
+        addTask(e){
+          e.preventDefault()
+          let timeStamp = new Date().getTime();
+          this.toDo.unshift({
+            id: timeStamp,
+            text: this.newTask,
+            done: false})
+          this.newTask = ""
+        },
+      }
+    })
+  </script>
+</body>
+</html>
