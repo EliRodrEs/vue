@@ -12,10 +12,6 @@
     <div class="row">
       <div class="col s12">
         <h1>My Shopping Cart</h1>
-        <select name="prueba" id="prueba" class="browser-default">
-          <option value="prueba 1">Prueba 1</option>
-          <option value="prueba 2">Prueba 2</option>
-        </select> 
       </div>
       <div class="col s6">
           <label for="">Introduce el Producto
@@ -30,7 +26,8 @@
           <label for="">Introduce la Descripción
             <input type="text"  v-model="product.description">
           </label>
-          <button @click="addProduct(product)" class="waves-effect waves-light btn">Enviar</button>
+          <button @click="addProduct" v-if="isNew" class="waves-effect waves-light btn">Enviar</button>
+          <button @click="exitEdit" v-else class="waves-effect waves-light btn">Salir de edición</button>
       </div>
       <div class="col s6">
         <table>
@@ -54,7 +51,7 @@
           </tbody>
         </table>
 
-        <p>Precio total = {{totalPrice}}</p>
+        <p>Total: {{total}}</p>
 
       </div>
     </div>
@@ -72,23 +69,28 @@
         isNew: true,
         product: {
           name: "",
-          price: 0,
+          price: "",
           urlImg: "",
           description: "",
           id: null
         },
-        products: [
-          {
-          name: "Apple",
+        products: [{
+          name: "Producto 1",
           price: 5,
-          urlImg: "https://cdn4.iconfinder.com/data/icons/food-icons/apple.png",
-          description: "Una manzanita",
+          urlImg: "",
+          description: "",
           id: 1
-          }
+          }, {
+          name: "Producto 2",
+          price: 4,
+          urlImg: "",
+          description: "",
+          id: 2
+          } 
         ]
       },
       computed: {
-        totalPrice(){
+        total(){
           let total = 0
           if (this.products.length) {
             let productsPrice = this.products.map((product) => product.price)
@@ -98,34 +100,37 @@
         }
       },
       methods: {
-        saveProduct(product){
+        saveProduct(){
           if(this.isNew) {
             this.product.id = new Date().getTime()
-            this.products.push(this.product)
+            let myProduct  = {... this.product}
+            this.products.push(myProduct)
             this.clearProduct()
-          } else {
-            this.product = product
           }
         },
-        addProduct(product){
+        addProduct(){
           this.isNew = true
-          this.saveProduct(product)
+          this.saveProduct()
+        },
+        editProduct(product){
+          this.isNew = false
+          this.product = product
+        },
+        exitEdit(){
+          this.isNew = true
+          this.product = { ...this.product }
+          this.clearProduct()
         },
         clearProduct(){
-          product.name = ""
-          product.price = ""
-          product.urlImg = ""
-          product.description = ""
-          product.id = ""
+          this.product.name = ""
+          this.product.price = ""
+          this.product.urlImg = ""
+          this.product.description = ""
+          this.product.id = ""
         },
         removeProduct(product){
           let index = this.products.findIndex((item) => item.id === product.id)
           this.products.splice(index, 1)
-        },
-        editProduct(product){
-          this.isNew = false
-          this.saveProduct()
-
         }
       }
     })
